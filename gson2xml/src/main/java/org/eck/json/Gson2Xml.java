@@ -1,5 +1,6 @@
 package org.eck.json;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -8,6 +9,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class Gson2Xml {
+
+    private Map<String, String> arrayNameResolver;
+
+    public Gson2Xml(Map<String, String> arrayNameResolver) {
+        this.arrayNameResolver = arrayNameResolver;
+    }
+
+    public Gson2Xml() {
+        this(null);
+    }
 
     public String parse(JsonObject object, String rootElement) {
 
@@ -30,23 +41,38 @@ public class Gson2Xml {
             if (value.isJsonObject()) {
                 processJsonObject(value.getAsJsonObject(), xml, entry.getKey());
             } else if (value.isJsonArray()) {
-                xml.append("<").append(entry.getKey()).append(">");
-
-                JsonArray asJsonArray = value.getAsJsonArray();
-                for (JsonElement jsonElement : asJsonArray) {
-                    if (jsonElement.isJsonObject()) {
-                        processJsonObject(jsonElement.getAsJsonObject(), xml, "entry");
-                    } else {
-                        processElementNode(jsonElement, "entry", xml);
-                    }
-                }
-
-                xml.append("</").append(entry.getKey()).append(">");
+                processJsonArray(xml, entry.getKey(), value.getAsJsonArray());
             } else {
                 processElementNode(entry.getValue(), entry.getKey(), xml);
             }
         }
         xml.append("</").append(nodeName).append(">");
+    }
+
+    private void processJsonArray(StringBuilder xml, String key, JsonArray value) {
+        xml.append("<").append(key).append(">");
+
+        String entryName = resolveEntryName(key);
+        
+        for (JsonElement jsonElement : value) {
+            if (jsonElement.isJsonObject()) {
+                processJsonObject(jsonElement.getAsJsonObject(), xml, entryName);
+            } else if (jsonElement.isJsonArray()) {
+                processJsonArray(xml, entryName, jsonElement.getAsJsonArray());
+            } else {
+                processElementNode(jsonElement, entryName, xml);
+            }
+        }
+
+        xml.append("</").append(key).append(">");
+    }
+
+    private String resolveEntryName(String key) {
+        String name = "entry";
+        if (arrayNameResolver != null && arrayNameResolver.get(key) != null) {
+            name = arrayNameResolver.get(key);
+        }
+        return name;
     }
 
     private void processElementNode(JsonElement value, String key, StringBuilder xml) {

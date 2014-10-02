@@ -2,6 +2,9 @@ package org.eck.json;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.google.gson.JsonArray;
@@ -85,6 +88,52 @@ public class Gson2XmlTest {
                 "<doc>" +
                   "<Values>" +
                      "<entry><Field>1</Field></entry>"+
+                   "</Values>" +
+                 "</doc>",
+                xml);
+    }
+
+    @Test
+    public void testParseArrayInsideArray() {
+        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
+
+        JsonArray jsonArray2 = new JsonArray();
+        jsonArray2.add(new JsonPrimitive(1));
+
+        jsonArray.add(jsonArray2);
+        jsonObject.add("Values", jsonArray);
+
+        Gson2Xml parser = new Gson2Xml();
+        String xml = parser.parse(jsonObject, "doc");
+        assertEquals(
+                "<doc>" +
+                  "<Values>" +
+                     "<entry>" +
+                        "<entry>1</entry>"+
+                      "</entry>"+
+                   "</Values>" +
+                 "</doc>",
+                xml);
+    }
+    
+    @Test
+    public void testParseArrayItemNomeResolver() {
+        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(new JsonPrimitive(1));
+        jsonArray.add(new JsonPrimitive(2));
+        jsonObject.add("Values", jsonArray);
+
+        Map<String, String> arrayNameResolver = new HashMap<String, String>();
+        arrayNameResolver.put("Values", "Value");
+        Gson2Xml parser = new Gson2Xml(arrayNameResolver);
+        String xml = parser.parse(jsonObject, "doc");
+        assertEquals(
+                "<doc>" +
+                  "<Values>" +
+                     "<Value>1</Value>"+
+                     "<Value>2</Value>"+
                    "</Values>" +
                  "</doc>",
                 xml);
