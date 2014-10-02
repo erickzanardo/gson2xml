@@ -26,7 +26,7 @@ Results in:
         <FieldBoolean>true</FieldBoolean>
 </doc>
 ```
-When using arrays, the default tag nade for itens are entry, for exemple, this code
+When using arrays, the default tag name for it's itens are "entry", for example, this code:
 ```java
         JsonObject jsonObject = new JsonObject();
         JsonArray jsonArray = new JsonArray();
@@ -49,7 +49,7 @@ Results in:
 </doc>
 ```   
 
-You can create a map to tell gson2xml how to resolve the name of the entries os the array by passing an Map as parameter to the Gson2Xml constructor, for example:
+You can create a map to tell gson2xml how to resolve the name of the entries of the array by passing an Map as a parameter to the Gson2Xml constructor, for example:
 
 ```java
         JsonObject jsonObject = new JsonObject();
