@@ -74,5 +74,17 @@ Resulting in:
         </Values>
 </doc>
 ```
+### Maven
 
-To use Gson2Xml in your project, clone the source code and install it in your maven repository, soon I will upload it to my own repository
+```xml
+  <repository>
+    <id>erickzanardo-releases</id>
+    <url>http://erickzanardo.github.com/maven/releases/</url>
+  </repository>
+
+  <dependency>
+    <groupId>org.eck.json</groupId>
+    <artifactId>gson2xml</artifactId>
+    <version>1.0.0</version>
+  </dependency>
+```
